@@ -21,8 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define ON_DELAY 2000
-#define OFF_DELAY 4000
+#define DELAY_2s 2000
+#define STATE_OFF 0
+#define STATE_ON 1
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,17 +89,32 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
+  int count = 0;
+  int state = STATE_ON;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, 1);
-    HAL_Delay(ON_DELAY);
-    HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, 0);
-    HAL_Delay(OFF_DELAY);
+    switch (state)
+    {
+    case STATE_ON:
+      HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_SET);
+      if(count == 0){
+        state = STATE_OFF;
+      }
+      break;
+    case STATE_OFF:
+      HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
+      if(count == 1){
+        state = STATE_ON;
+        count = 0;
+      }
+      break;
+    }
+    count = count + 1;
+    HAL_Delay(DELAY_2s);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
